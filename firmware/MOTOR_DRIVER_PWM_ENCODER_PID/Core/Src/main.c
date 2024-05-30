@@ -24,6 +24,7 @@
 #include "motor_control.h"
 #include "stdio.h"
 #include "motor_encoder.h"
+#include "pid_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,6 +74,16 @@ static encoder_inst  motorb_enc = 	{.first_time = 0,
 											.position = 0,
 											.timer_period = 0.01,
 											.velocity = 0};
+static pid_instance mota_pid = {.d_gain = 0,
+								.error_integral = 0,
+								.i_gain = 25,
+								.integral_max = 5000,
+								.last_error = 0,
+								.output = 0,
+								.p_gain = 20,
+								.pid_max = 100,
+								.sam_rate = 100};
+
 float temp_velocity;
 uint8_t timer_flag;
 /* USER CODE END PV */
@@ -132,18 +143,18 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   enable_motor((motor_inst*)&motor_a);
   enable_motor((motor_inst*)&motor_b);
-  HAL_Delay(100);
-  set_speed_open((motor_inst*)&motor_a, 20.0);
-  set_speed_open((motor_inst*)&motor_b, 20.0);
-  HAL_Delay(3000);
-  set_speed_open((motor_inst*)&motor_a, -10.0);
-   set_speed_open((motor_inst*)&motor_b, -20.0);
-   HAL_Delay(3000);
-   disable_motor((motor_inst*)&motor_a);
-   disable_motor((motor_inst*)&motor_b);
+//  HAL_Delay(100);
+//  set_speed_open((motor_inst*)&motor_a, 20.0);
+//  set_speed_open((motor_inst*)&motor_b, 20.0);
+//  HAL_Delay(3000);
+//  set_speed_open((motor_inst*)&motor_a, -10.0);
+//   set_speed_open((motor_inst*)&motor_b, -20.0);
+//   HAL_Delay(3000);
+//   disable_motor((motor_inst*)&motor_a);
+//   disable_motor((motor_inst*)&motor_b);
   reset_encoder(&motora_enc);
   reset_encoder(&motorb_enc);
-
+  reset_pid(&mota_pid);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -156,6 +167,8 @@ int main(void)
 		  get_encoder_speed(&motora_enc);
 		  get_encoder_speed(&motorb_enc);
 		  temp_velocity = motora_enc.velocity;
+		  apply_pid(&mota_pid, 5 - temp_velocity);
+		  set_speed_open((motor_inst*)&motor_a, mota_pid.output);
 	  }
     /* USER CODE END WHILE */
 
