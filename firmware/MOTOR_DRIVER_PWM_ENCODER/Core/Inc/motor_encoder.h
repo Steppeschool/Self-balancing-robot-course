@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-#define NUMBER_OF_TICKS_PER_REV       25000
+#define NUMBER_OF_TICKS_PER_REV       600
 #define ONE_REV_LENGTH_CM             22
 #define TWOPI                         6.28318530718  // radians per rotation
 

@@ -127,20 +127,22 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+  HAL_Delay(5000);
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   enable_motor((motor_inst*)&motor_a);
   enable_motor((motor_inst*)&motor_b);
   HAL_Delay(100);
-  set_speed_open((motor_inst*)&motor_a, 20.0);
-  set_speed_open((motor_inst*)&motor_b, 20.0);
-  HAL_Delay(3000);
-  set_speed_open((motor_inst*)&motor_a, -10.0);
-   set_speed_open((motor_inst*)&motor_b, -20.0);
-   HAL_Delay(3000);
-   disable_motor((motor_inst*)&motor_a);
-   disable_motor((motor_inst*)&motor_b);
+  set_speed_open((motor_inst*)&motor_a, 100.0);
+  set_speed_open((motor_inst*)&motor_b, 100.0);
+//  HAL_Delay(3000);
+//  set_speed_open((motor_inst*)&motor_a, -10.0);
+//   set_speed_open((motor_inst*)&motor_b, -20.0);
+//   HAL_Delay(3000);
+//   disable_motor((motor_inst*)&motor_a);
+//   disable_motor((motor_inst*)&motor_b);
   reset_encoder(&motora_enc);
   reset_encoder(&motorb_enc);
 
@@ -463,6 +465,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, LD2_Pin|PHB_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, STSP_RST_Pin|PHA_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
@@ -485,6 +490,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LED_Pin */
+  GPIO_InitStruct.Pin = LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : STSP_RST_Pin PHA_Pin */
   GPIO_InitStruct.Pin = STSP_RST_Pin|PHA_Pin;
